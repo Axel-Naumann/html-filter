@@ -16,13 +16,10 @@ const hf_options = {
     "Method": ['Binaries', 'Conda', 'Source']
 };
 
-// If a combination of options should be vetoed, add it here, like such:
-// hf_veto = [[0, 1, 1, 0], [1, 2, 1, 1]];
-const hf_veto = []
-
 // Whether any of the hf_options allows for multiple selections. TODO: implement.
 //const hf_allow_multiple = [false, false, false, false];
 
+// What to show for each option. Options not listed will be unavailable.
 const hf_results = {
     "Latest Stable": {
         "Fedora/RHEL/Alma": {
@@ -76,7 +73,6 @@ $ conda activate <my-environment>\
     }
 };
 
-const hf_result_default = "I don't have that information. Please try again with different options.";
 
 //
 //
@@ -87,23 +83,23 @@ window.onload = hf_inject;
 
 // Inject the filter into the page.
 function hf_inject() {
-    hf_filter = "<table>";
+    hf_filter_html = "<table>";
     let i = 0;
     for (const [key, value] of Object.entries(hf_options)) {
         i = i++;
-        hf_filter += '<tr><th scope="row">' + key + '</th><td>';
+        hf_filter_html += '<tr><th scope="row">' + key + '</th><td>';
         for (let j = 0; j < value.length; ++j) {
-            hf_filter += '<input type="radio" id="hf_select_' + i + '_' + j + '" name="hd_select_' + i + '" onchange="hf_filter()"/><label for="hf_select_' + i + '_' + j + '">' + value[j] + '</label>';
+            hf_filter_html += '<input type="radio" id="hf_select_' + i + '_' + j + '" name="hd_select_' + i + '" onchange="hf_filter()"/><label for="hf_select_' + i + '_' + j + '">' + value[j] + '</label>';
         }
-        hf_filter += '</td></tr>';
+        hf_filter_html += '</td></tr>';
     }
-    hf_filter += "</table>";
-    document.getElementById('hf-filter').innerHTML = hf_filter;
+    hf_filter_html += "</table>";
+    document.getElementById('hf-filter').innerHTML = hf_filter_html;
+    hf_filter();
 }
 function hf_filter() {
-    /*
-    const opts = Array(hf_options.length);
-    for (let i = 0; i < hf_options.length; ++i) {
+    const opts = Array(Object.entries(hf_options).length);
+    for (const [key, value] of Object.entries(hf_options)) {
         const select = document.getElementById("hf_select_" + i);
         opts[i] = select.options[select.selectedIndex].text;
     }
@@ -124,5 +120,4 @@ function hf_filter() {
 
     const result = hf_results[opts[0]][opts[1]][opts[2]][opts[3]];
     document.getElementById("hf_result").innerHTML = result;
-    */
 }
